@@ -24,11 +24,14 @@ class TestCard extends FlxSprite
     private var _pressed:Bool;
     private var _clickRelatedPos:FlxPoint;
     
-    public function new(X:Float, Y:Float) 
+    public function new(X:Float, Y:Float, useCardGraphic:Bool = true) 
     {
         super(X, Y);
         
-		this.loadGraphic("assets/images/Deck.png", true, 123, 123);
+        if (useCardGraphic == true)
+        {
+            this.loadGraphic("assets/images/Deck.png", true, 123, 123);
+        }
 		
         this._pressed = false;
         
@@ -38,6 +41,15 @@ class TestCard extends FlxSprite
 
         //Assign a rnd index.
         this._cardIndex = Std.random(53) + 1;
+        
+        //NOTE HERE
+        //If you will have multiple cameras, you need to make sure which one is going to render your FlxObject, 
+        //it might be unharmed in most situations, but in this case, becasue we will add mouse events, that need to calcuate by cameras
+        //if you didn't do something, it might cause bugs you don't want.
+        this.camera = FlxG.camera;
+        this.cameras = [FlxG.camera];
+        //
+        
         
 		// Setup the mouse events
         //MouseEventManager.add(object, onMouseDown, onMouseUp, onMouseOver, onMouseOut);

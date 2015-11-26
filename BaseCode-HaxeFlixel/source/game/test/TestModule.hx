@@ -3,10 +3,14 @@ package game.test;
 import core.system.AudioManager;
 import core.ui.DialogText;
 import flixel.addons.text.FlxTypeText;
+import flixel.FlxCamera;
 import flixel.FlxG;
+import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
+import flixel.util.FlxPoint;
 import game.gameState.BaseGameState;
 import game.test.TestCard;
 import utils.AssetPaths;
@@ -19,6 +23,12 @@ class TestModule extends FlxState
 {
     private var _flxText:DialogText; 
     private var _statusText:DialogText; 
+    
+    private var _sprGroup:FlxSpriteGroup;
+    
+    private var _2ndCamera:FlxCamera;
+    
+    private var _sprRotated:FlxSprite;
     
 	/**
 	 * Function that is called up when to state is created to set it up.
@@ -41,6 +51,21 @@ class TestModule extends FlxState
 		_statusText.prefix = "Status: ";
         this.add(_statusText);
         
+        _sprGroup = new FlxSpriteGroup();
+        _sprGroup.setPosition(100, 100);
+        
+        var spr:FlxSprite = new TestCard(50, 0, false);
+        spr.scale.y = 2;
+        _sprGroup.add(spr);
+        
+        spr = new TestCard(0, 50, false);
+        spr.scale.x = 2;
+        _sprGroup.add(spr);
+        
+        spr = new TestCard(50, 50, false);
+        spr.scale.set(2, 2);
+        _sprGroup.add(spr);
+        
         //Non-embed text
         this.add(new FlxText(10, 80, 250, "abc嗯嗯哈哈你好嗎科科xyz", 16));
         
@@ -62,6 +87,23 @@ class TestModule extends FlxState
 		this.add(new FlxButton(20, FlxG.height - 30, "Force Start", ForceStartCallback));
 		this.add(new FlxButton(120, FlxG.height - 30, "Cursor", CursorCallback));
 		this.add(new FlxButton(220, FlxG.height - 30, "Force Erase", ForceEraseCallback));
+        
+        this.add(_sprGroup);
+        
+        //test 2nd camera
+        _2ndCamera = new FlxCamera(300, 50, 200, 30);
+		_2ndCamera.setBounds(0, 0, FlxG.width, FlxG.height);
+		_2ndCamera.bgColor = 0xFFFFCCCC;
+        _2ndCamera.follow(_statusText);
+        
+		FlxG.cameras.add(_2ndCamera);
+        
+        //test rotated sprite
+        _sprRotated = new FlxSprite(300, 300);
+        //_sprRotated.offset.x = 50;
+        _sprRotated.scale.x = 5;
+        //_sprRotated.centerOrigin();
+        this.add(_sprRotated);
         
         //debug msg
         trace(Fonts.Get().TestZhFont_PATH);
@@ -91,6 +133,32 @@ class TestModule extends FlxState
 	override public function update():Void
 	{
 		super.update();
+        
+        if (FlxG.keys.pressed.A)
+        {
+            this._sprGroup.x -= 1;
+        }
+        if (FlxG.keys.pressed.S)
+        {
+            this._sprGroup.y += 1;
+        }
+        if (FlxG.keys.pressed.W)
+        {
+            this._sprGroup.y -= 1;
+        }
+        if (FlxG.keys.pressed.D)
+        {
+            this._sprGroup.x += 1;
+        }
+        
+        if (FlxG.keys.pressed.Z)
+        {
+            this._sprRotated.angle += 0.5;
+        }
+        if (FlxG.keys.pressed.X)
+        {
+            this._sprRotated.angle -= 0.5;
+        }
 	}
     
     private function StartCallback():Void
